@@ -83,5 +83,8 @@ if __name__ == "__main__":
     if(len(sys.argv)) != 3:
         print("Usage: python3 game_driver.py <player1 type> <player2 type>")
         exit(1)
-    game = GameDriver(sys.argv[1], sys.argv[2], 4, 4)
+
+    size = 4
+
+    game = GameDriver(sys.argv[1], sys.argv[2], size, size)
     game.run()

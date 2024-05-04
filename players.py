@@ -63,29 +63,59 @@ class MinimaxPlayer(Player):
     def clone(self):
         return MinimaxPlayer(self.symbol)
 
-    def utility(self, board):
-        #todo
-
     def minimax(self, board, depth, symbol):
-        if symbol == self.symbol:
-            #maximizing player
+        sign = 1
+        if symbol == self.oppSym:
+            sign = -1
+
+        best_eval = float('-inf') * sign
+        best_move = None
+
+        if depth == self.maxDepth:
+            return board.count_score(self.symbol) * sign, None
+
+        for move in board.get_legal_moves(symbol):
+            newBoard = board.clone_of_board()
+            newBoard.play_move(move[0], move[1], symbol)
+
+            if symbol == self.symbol:
+                eval, _ = self.minimax(newBoard, depth + 1, self.oppSym) #switch symbol
+                if eval > best_eval:
+                    best_eval = eval
+                    best_move = move
+            else:
+                eval, _ = self.minimax(newBoard, depth + 1, self.symbol) #same
+                if eval < best_eval:
+                    best_eval = eval
+                    best_move = move
+
+        if best_move is None:
+            return board.count_score(self.symbol) * sign, None
         
-        else:
-            #minimizing player
-
-
+        return best_eval, best_move
+    
     def get_move(self, board):
         #start timer
         start = time.time()
 
         #get best move
-        best_move = self.minimax(board, 0, self.symbol)
-
+        s, best_move = self.minimax(board, 0, self.symbol)
+        
+        if best_move is None:
+            print("No legal moves")
+            return None
+        
         #end timer
         end = time.time()
 
         #print time
-        print("Minimax " + self.symbol + " move took: " + str(end - start) + " seconds")
+        print("Minimax ", self.symbol, " took ", end - start, " seconds.")
+        print("and chose ", best_move, " with score ", s)
+
+        #if time is greater than 2 seconds, fuk it remove 1 from depth
+        if end - start > 2:
+            print("Trimming depth, took ", end - start, " seconds.")
+            self.maxDepth -= 1
 
         return best_move
         
