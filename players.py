@@ -14,7 +14,9 @@ class Player:
     #parent get_move should not be called
     def get_move(self, board):
         raise NotImplementedError()
-
+    
+    def average_time(self):
+        return 'a very very long time'
 
 class HumanPlayer(Player):
     def __init__(self, symbol):
@@ -41,10 +43,12 @@ class HumanPlayer(Player):
         except:
             print("Invalid input")
         while (col, row) not in board.get_legal_moves(self.symbol):
-            while not self.valid_input(col):
+            print("Try again")
+            try:
                 col = int(input("Enter column: "))
-            while not self.valid_input(row):
                 row = int(input("Enter row: "))
+            except:
+                print("Invalid input")
 
         return col, row
 
@@ -59,6 +63,8 @@ class MinimaxPlayer(Player):
             self.oppSym = 'X'
 
         self.maxDepth = 5
+
+        self.times = []
 
     def clone(self):
         return MinimaxPlayer(self.symbol)
@@ -109,16 +115,21 @@ class MinimaxPlayer(Player):
         end = time.time()
 
         #print time
-        print("Minimax ", self.symbol, " took ", end - start, " seconds.")
+        print("Minimax ", self.symbol, " took ", round(end - start, 2), " seconds")
         print("and chose ", best_move, " with score ", s)
+
+        self.times.append(end - start)
 
         #if time is greater than 2 seconds, fuk it remove 1 from depth
         if end - start > 2:
-            print("Trimming depth, took ", end - start, " seconds.")
+            print("Trimming depth, last move took too long, new depth: ", self.maxDepth - 1)
             self.maxDepth -= 1
 
         return best_move
         
+    def average_time(self):
+        #return round(sum(self.times) / len(self.times), 2)
+        return sum(self.times) / len(self.times)
 
         
 

@@ -78,13 +78,16 @@ class GameDriver:
         else:
             print("Player 2 Wins!")
 
+        print("Final Score: ", self.board.count_score(self.p1.symbol), " - ", self.board.count_score(self.p2.symbol))
+        print("Time taken: Player 1: ", self.p1.average_time(), " Player 2: ", self.p2.average_time())
+
 
 if __name__ == "__main__":
     if(len(sys.argv)) != 3:
         print("Usage: python3 game_driver.py <player1 type> <player2 type>")
         exit(1)
 
-    size = 4
+    size = 8
 
     game = GameDriver(sys.argv[1], sys.argv[2], size, size)
     game.run()
